@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, SUPABASE_CONFIG_ERROR, usePublicSupabaseConfig } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -32,14 +32,15 @@ export function LoginForm({
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = safeNextPath(searchParams.get("next"));
+  const { configured: hasSupabaseConfig, checked: checkedSupabaseConfig } = usePublicSupabaseConfig();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
     try {
+      const supabase = createClient();
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -94,8 +95,9 @@ export function LoginForm({
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
+              {checkedSupabaseConfig && !hasSupabaseConfig && <p className="text-sm text-amber-600">{SUPABASE_CONFIG_ERROR}</p>}
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full" disabled={isLoading || !hasSupabaseConfig}>
                 {isLoading ? "登录中..." : "登录"}
               </Button>
             </div>

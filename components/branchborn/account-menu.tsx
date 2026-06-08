@@ -2,19 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, usePublicSupabaseConfig } from "@/lib/supabase/client";
 
 export function AccountMenu() {
   const [email, setEmail] = useState("");
+  const { configured: hasSupabaseConfig, checked: checkedSupabaseConfig } = usePublicSupabaseConfig();
 
   useEffect(() => {
+    if (!hasSupabaseConfig) return;
     const supabase = createClient();
     void supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
-  }, []);
+  }, [hasSupabaseConfig]);
 
   async function logout() {
+    if (!hasSupabaseConfig) return;
     await createClient().auth.signOut();
     location.href = "/auth/login";
+  }
+
+  if (checkedSupabaseConfig && !hasSupabaseConfig) {
+    return <span className="text-xs text-stone-400">未配置登录</span>;
   }
 
   return (

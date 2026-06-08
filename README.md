@@ -16,6 +16,20 @@ npm run dev
 
 如果本地只配置公开 Supabase 变量，应用会使用 `.data/` 下的本地持久化和演示生成图片，便于完整体验流程。配置 `SUPABASE_SERVICE_ROLE_KEY` 和对应模型 API Key 后，服务端会切换到 Supabase 私有 Storage 和真实生图服务。
 
+## Docker Compose 部署
+
+Branchborn 提供仅应用容器的 Docker Compose 部署方式，默认连接外部 Supabase、Kie AI 和 Tokendance 服务。
+
+```bash
+cp .env.docker.example .env.docker
+docker compose build
+docker compose up -d
+```
+
+启动后访问 [http://localhost:3000](http://localhost:3000)。健康检查地址为 [http://localhost:3000/api/health](http://localhost:3000/api/health)。
+
+部署前需要把 `.env.docker` 中的占位值替换为真实配置。生产环境建议将 `APP_URL` 设置为公开可访问的 HTTPS 域名，并由外部反向代理或托管平台负责 TLS。
+
 ## 数据库初始化
 
 确认目标 Supabase 项目后，执行迁移：

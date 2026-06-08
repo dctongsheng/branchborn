@@ -42,9 +42,23 @@ IMAGE_API_WEBHOOK_HMAC_KEY=
 - `IMAGE_API_WEBHOOK_HMAC_KEY`：在 Kie AI 设置页面生成的 Webhook HMAC Key，用于验证生产环境回调签名。
 - 生产环境的 `APP_URL` 需要替换为公开可访问的 HTTPS 域名。
 
+## Docker Compose 部署
+
+Docker Compose 部署使用 `.env.docker` 注入运行时配置：
+
+```bash
+cp .env.docker.example .env.docker
+```
+
+`.env.docker` 的变量含义与 `.env.local` 一致，但用于容器运行环境。该文件包含真实密钥时不要提交到 Git，仓库只提交 `.env.docker.example` 作为模板。
+
+Compose 只启动 Branchborn 应用容器，不自托管 Supabase。`NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`、`SUPABASE_SERVICE_ROLE_KEY` 和第三方 API Key 均应指向外部服务。
+
+如果没有配置可用的 `SUPABASE_SERVICE_ROLE_KEY`，应用会回退到容器内 `/app/.data` 的本地演示持久化；`docker-compose.yml` 已将该路径挂载为命名卷。正式生产数据仍建议使用 Supabase 数据库和私有 Storage。
+
 ## 安全约定
 
 - 不要把真实密钥提交到 Git。
 - 不要将 `SUPABASE_SERVICE_ROLE_KEY`、`IMAGE_API_KEY`、`TOKENDANCE_API_KEY`、`ERNIE_IMAGE_API_KEY` 或 `IMAGE_API_WEBHOOK_HMAC_KEY` 暴露给浏览器。
 - 本地真实值写入 `.env.local`。
-- 部署时在托管平台的环境变量设置中配置真实值。
+- Docker Compose 部署时将真实值写入 `.env.docker`；托管平台部署时在平台环境变量设置中配置真实值。
