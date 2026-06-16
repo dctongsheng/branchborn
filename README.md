@@ -28,7 +28,13 @@ docker compose up -d
 
 启动后访问 [http://localhost:3000](http://localhost:3000)。健康检查地址为 [http://localhost:3000/api/health](http://localhost:3000/api/health)。
 
-部署前需要把 `.env.docker` 中的占位值替换为真实配置。生产环境建议将 `APP_URL` 设置为公开可访问的 HTTPS 域名，并由外部反向代理或托管平台负责 TLS。
+部署前需要把 `.env.docker` 中的占位值替换为真实配置。Docker 生产环境必须配置 Supabase、Kie AI、Tokendance 和 Webhook HMAC Key；缺少配置时 `/api/health` 会返回 503，应用不会回退到 `.data` 演示存储。生产环境需要将 `APP_URL` 设置为公开可访问的 HTTPS 域名，并由外部反向代理或托管平台负责 TLS。
+
+生产 Webhook 地址为：
+
+```text
+https://你的域名/api/webhooks/kie-ai
+```
 
 ## 数据库初始化
 

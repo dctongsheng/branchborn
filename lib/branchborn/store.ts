@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
+import { assertProductionReady } from "@/lib/branchborn/production";
 import type { Asset, CanvasNodeRecord, GenerationTask, Message, Project, Store } from "@/lib/branchborn/types";
 
 const DATA_DIR = path.join(process.cwd(), ".data");
@@ -8,6 +9,7 @@ const STORE_PATH = path.join(DATA_DIR, "branchborn.json");
 const EMPTY_STORE: Store = { projects: [], messages: [], canvas_nodes: [], generation_tasks: [], assets: [] };
 
 export function isSupabaseConfigured() {
+  assertProductionReady();
   return Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
       process.env.SUPABASE_SERVICE_ROLE_KEY &&
